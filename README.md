@@ -1,81 +1,22 @@
 # mobile-data
-import pandas as pd 
-import numpy as np 
-import matplotlib.pyplot as plt 
-  
+Python is a great language for doing data analysis, primarily because of the ecosystem of data-centric Python packages. Pandas is one of those packages and makes importing and analyzing data much easier.
 
-DATASET_FILENAME = 'june24_publish.csv'
-CONST_OPERATOR = 'JIO'
-CONST_STATE = 'Delhi'
-CONST_TECHNOLOGY = '4G'
-final_download_speeds = [] 
-final_upload_speeds = [] 
-final_states = [] 
-final_operators = [] 
-df = pd.read_csv('june24_publish.csv') 
+Will be  using a real dataset from TRAI to analyze mobile dataspeeds and try to see the average speeds for a particular operator or state in that month. This will also show how easily Pandas could be used on any real world data to derive interesting results.
 
-df.columns = ['Service Provider', 'Technology', 'Test Type', 
-                   'Data Speed', 'Signal Strength', 'State'] 
-                   states = df['State'].unique() 
-print('STATES Found: ', states) 
-  
+About Dataset –
+Telecom Regulatory Authority of India (TRAI) releases a monthly dataset of the internet speeds it measures through the MySpeed (TRAI) app. This includes speed tests initiated by the user itself or periodic background tests done by the app. Will try to analyze this dataset and see the average speeds for a particular operator or state in that month.
 
-operators = df['Service Provider'].unique() 
-print('OPERATORS Found: ', operators) 
+Inspecting the raw structure of data:
 
-filtered = df[(df['Service Provider'] == CONST_OPERATOR)  
-               & (df['Technology'] == CONST_TECHNOLOGY)] 
-  
+st column is of the Network Operator – JIO, Airtel etc.
+2nd column is of the Network Technology – 3G or 4G.
+3rd column is the Type of Test initiated – upload or download.
+4th column is the Speed Measured in Kilobytes per second.
+5th column is the Signal Strength during the measurement.
+6th column is the Local Service Area(LSA), or the circle where the test was done – Delhi, Orissa etc.
 
-for state in states: 
-  
-   
-    base = filtered[filtered['State'] == state] 
-  
-   
-    down = base[base['Test Type'] == 'download'] 
-  
+Packages used:
+Pandas – a popular data analysis toolkit. Very powerful for crunching large sets of data.
+Numpy – provides fast and efficient operations on arrays of homogeneous data. 
+Matplotlib – is a plotting library. We will use its bar plotting function to make bar graphs.
 
-    up = base[base['Test Type'] == 'upload'] 
-  
-   
-    avg_down = down['Data Speed'].mean() 
-  
-   
-    avg_up = up['Data Speed'].mean() 
-  
-
-    if (pd.isnull(avg_down) or pd.isnull(avg_up)): 
-        down, up = 0, 0
-      
-    else: 
-        final_states.append(state) 
-        final_download_speeds.append(avg_down) 
-        final_upload_speeds.append(avg_up) 
-  
-
-        print(str(state) + ' -- Avg. Download: ' +
-                          str('%.2f' % avg_down) + 
-         '  Avg. Upload: ' + str('%.2f' % avg_up)) 
-         
-fig, ax = plt.subplots() 
-bar_width = 0.25
-opacity = 0.8
-index = np.arange(len(final_states)) 
-bar_download = plt.bar(index, final_download_speeds, 
-                       bar_width, alpha=opacity, 
-                       color='b', label='Download') 
-  
-bar_upload = plt.bar(index + bar_width, final_upload_speeds,  
-                        bar_width, alpha=opacity, color='g', 
-                                             label='Upload') 
-   
-
-plt.title('Avg. Download/Upload speed for '
-                     + str(CONST_OPERATOR)) 
-plt.xlabel('States') 
-plt.ylabel('Average Speeds in Kbps') 
-plt.xticks(index + bar_width, final_states, rotation=90) 
-plt.legend() 
-plt.tight_layout() 
-plt.show() 
